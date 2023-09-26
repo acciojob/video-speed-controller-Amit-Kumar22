@@ -2,20 +2,90 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Video Speed Scrubber</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>HTML Video Player</title>
+  <link rel="stylesheet" href="gpt.css">
 </head>
 <body>
 
-  <div class="wrapper">
-    <video class="flex" width="765" height="430" src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" controls></video>
-    <div class="speed">
-      <div class="speed-bar">1×</div>
-    </div>
-  </div>
+   <div class="player">
+     <video id="player__video viewer" src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4"></video>
 
-<script  src="./script.js">
-  //Your code goes here
-</script>
+     <div class="player__controls">
+       <div class="progress">
+        <div id="progress__filled"></div>
+       </div>
+       <button id="player__button toggle" title="Toggle Play">►</button>
+       <input type="range" name="volume" id="player__slider" min="0" max="1" step="0.05" value="1">
+       <input type="range" name="playbackRate" id="speed" min="0.5" max="2" step="0.1" value="1">
+       <button data-skip="-10" id="skip-backward">« 10s</button>
+       <button data-skip="25" id="skip-forward">25s »</button>
+     </div>
+   </div>
+
+  <script>
+	  // Get references to elements
+const video = document.getElementById("player__video viewer");
+const playPauseButton = document.getElementById("player__button toggle");
+const progress = document.getElementById("progress__filled");
+const volumeSlider = document.getElementById("player__slider");
+const speedSlider = document.getElementById("speed");
+const skipBackwardButton = document.getElementById("skip-backward");
+const skipForwardButton = document.getElementById("skip-forward");
+
+// Add event listeners
+video.addEventListener("click", togglePlay);
+playPauseButton.addEventListener("click", togglePlay);
+video.addEventListener("play", updateButton);
+video.addEventListener("pause", updateButton);
+video.addEventListener("timeupdate", updateProgress);
+volumeSlider.addEventListener("input", updateVolume);
+speedSlider.addEventListener("input", updateSpeed);
+skipBackwardButton.addEventListener("click", skipBackward);
+skipForwardButton.addEventListener("click", skipForward);
+progress.addEventListener("click", seek);
+
+// Define functions for the event listeners
+function togglePlay() {
+    if (video.paused) {
+        video.play();
+    } else {
+        video.pause();
+    }
+}
+
+function updateButton() {
+    const icon = video.paused ? "Play" : "Pause";
+    playPauseButton.textContent = icon;
+}
+
+function updateProgress() {
+    const percent = (video.currentTime / video.duration) * 100;
+    progress.style.width = `${percent}%`;
+}
+
+function updateVolume() {
+    video.volume = volumeSlider.value;
+}
+
+function updateSpeed() {
+    video.playbackRate = speedSlider.value;
+}
+
+function skipBackward() {
+    video.currentTime -= 10; // Skip 10 seconds backward
+}
+
+function skipForward() {
+    video.currentTime += 10; // Skip 10 seconds forward
+}
+
+function seek(e) {
+    const seekTime = (e.offsetX / progress.clientWidth) * video.duration;
+    video.currentTime = seekTime;
+}
+
+// Additional functionality can be added based on your requirements.
+
+  </script>
 </body>
 </html>
